@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Button, Form, Table } from 'semantic-ui-react';
+import { Button, Form, Table, Grid, } from 'semantic-ui-react';
 
 export type TPeople = {
+  [key: string]: any;
   birth_year: string;
   created: string;
   edited: string;
@@ -36,6 +37,7 @@ function App() {
   const [next, setNext] = useState<string>('');
   const [totalFetched, setTotalFetched] = useState(0);
   const [query, setQuery] = useState<string>('');
+  const [people, setPeople] = useState<TPeople>();
 
   const fetcher = (url: string) => {
     const promise = axios.get(url);
@@ -95,6 +97,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        {'EVOS FE TEST - YODIVAN'}
       </header>
       <div id={"scrollableDiv"} style={{ margin: 20, height: 500, overflowY: 'scroll' }}>
         <div style={{ marginBottom: 20 }}>
@@ -122,7 +125,7 @@ function App() {
             </Table.Header>
             <Table.Body>
               {rows.length != 0 && rows.map((row, index) => (
-                <Table.Row key={`list-${index}`}>
+                <Table.Row key={`list-${index}`} onClick={() => { setPeople(row) }}>
                   <Table.Cell>{index + 1}</Table.Cell>
                   <Table.Cell>{row.name}</Table.Cell>
                   <Table.Cell>{row.birth_year}</Table.Cell>
@@ -132,6 +135,34 @@ function App() {
             </Table.Body>
           </Table>
         </InfiniteScroll>
+      </div>
+      <div>
+        {people && (
+          <div>
+            <h3>{'Detail'}</h3>
+            <Grid centered>
+              {Object.keys(people).map((key) => (
+                <Grid.Row>
+                  <Grid.Column>{`${key}:`}</Grid.Column>
+                  <Grid.Column>
+                    {(typeof people[key] === 'object' && (
+                      <div>
+                        {people[key].map((item: string) => (
+                          <div>
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                    {(typeof people[key] === 'string' && (
+                      people[key]
+                    ))}
+                  </Grid.Column>
+                </Grid.Row>
+              ))}
+            </Grid>
+          </div>
+        )}
       </div>
     </div>
   );
